@@ -44,6 +44,8 @@ h1{font-family:var(--display);font-weight:700;font-size:2.2em;margin:0;letter-sp
 button{font:inherit;font-weight:600;font-size:1em;padding:.6em 1.4em;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
 button:focus,button:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent)}
 button.primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.btnlink{align-self:flex-start;font-weight:600;padding:.5em 1.1em;border-radius:10px;border:2px solid var(--accent);color:var(--accent);text-decoration:none}
+.btnlink:focus,.btnlink:focus-visible{outline:none;background:var(--accent);color:var(--bg)}
 button.on{border-color:var(--ok);color:var(--ok)}
 .log{overflow-x:auto}
 table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:.85em}
@@ -72,6 +74,7 @@ th{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.0
     <div class="big" id="cdnSpeed">–<small>Mbps</small></div>
     <div class="bar"><i id="cdnBar"></i></div>
     <span class="sub" id="cdnSub">Servidor más cercano</span>
+    <a class="btnlink" id="cdnLink" href="https://torbox.app/speedtest" target="_blank" rel="noopener" hidden>Abrir test oficial de TorBox</a>
   </div>
   <div class="card">
     <span class="label">Tu conexión a Internet</span>
@@ -190,7 +193,7 @@ th{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.0
   }
 
   async function testCdn(){
-    setPill("cdnPill","","Buscando servidor");
+    setPill("cdnPill","","Buscando servidor"); $("cdnLink").hidden = true;
     setBig("cdnSpeed","–","Mbps"); $("cdnBar").style.width="0";
     var list;
     try {
@@ -199,8 +202,9 @@ th{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.0
       var j = await res.json();
       list = Array.isArray(j.data) ? j.data : (j.data && typeof j.data === "object" ? Object.values(j.data) : []);
     } catch(e) {
-      setPill("cdnPill","warn","No medible aquí");
-      $("cdnSub").textContent = "Abre torbox.app/speedtest para medir el CDN";
+      setPill("cdnPill","warn","TorBox no deja medirlo desde otra web");
+      $("cdnSub").textContent = "Usa su test oficial, en su propia web";
+      $("cdnLink").hidden = false;
       return null;
     }
     var item = null;
@@ -218,8 +222,9 @@ th{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.0
       return mbps;
     } catch(e) {
       setBig("cdnSpeed","–","Mbps");
-      setPill("cdnPill","warn","Bloqueado por el navegador");
-      $("cdnSub").textContent = name + " · usa torbox.app/speedtest";
+      setPill("cdnPill","warn","TorBox no deja medirlo desde otra web");
+      $("cdnSub").textContent = name + " · usa su test oficial";
+      $("cdnLink").hidden = false;
       return null;
     }
   }
@@ -293,8 +298,9 @@ th{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.0
   });
 
   // Navegación con el mando (flechas izquierda/derecha entre botones)
-  var btns = [$("runBtn"),$("watchBtn"),$("clearBtn")];
   document.addEventListener("keydown", function(e){
+    var btns = [$("runBtn"),$("watchBtn"),$("clearBtn")];
+    if (!$("cdnLink").hidden) btns.unshift($("cdnLink"));
     var i = btns.indexOf(document.activeElement);
     if (e.key === "ArrowRight"){ btns[(i+1+btns.length)%btns.length].focus(); e.preventDefault(); }
     if (e.key === "ArrowLeft"){ btns[(i-1+btns.length)%btns.length].focus(); e.preventDefault(); }
