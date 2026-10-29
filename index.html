@@ -73,16 +73,16 @@ tr.best td{color:var(--accent);font-weight:600}
 <body>
 <header>
   <h1>Semáforo TorBox</h1>
-  <span class="updated" id="stamp">Midiendo…</span>
+  <span class="updated" id="stamp">Sin medir todavía</span>
 </header>
 
-<section class="exit" id="exit"><span class="label">Sales a Internet por</span> <span id="exitText">comprobando…</span></section>
+<section class="exit" id="exit"><span class="label">Sales a Internet por</span> <span id="exitText">se comprueba al empezar la prueba</span></section>
 
 <section class="reco" id="reco">
   <div>
     <span class="label">Calidad recomendada</span>
-    <h2 id="recoTitle">Midiendo…</h2>
-    <p id="recoSize">Tarda unos 25 segundos.</p>
+    <h2 id="recoTitle">Listo para medir</h2>
+    <p id="recoSize">Pulsa «Empezar prueba». Tarda unos 25 segundos y consume unos 300–600 MB.</p>
     <p id="recoWhy"></p>
   </div>
   <ul class="tiers" id="tiers"></ul>
@@ -112,7 +112,7 @@ tr.best td{color:var(--accent);font-weight:600}
 </section>
 
 <div class="controls">
-  <button class="primary" id="runBtn" autofocus>Repetir prueba</button>
+  <button class="primary" id="runBtn" autofocus>Empezar prueba</button>
   <button id="watchBtn">Vigilar cada 5 min: no</button>
   <button id="clearBtn">Borrar historial</button>
   <a class="btnlink" id="cdnSettings" href="https://torbox.app/settings?section=integration-settings" target="_blank" rel="noopener">Cambiar servidor en TorBox</a>
@@ -401,7 +401,7 @@ tr.best td{color:var(--accent);font-weight:600}
     if (e.key==="ArrowLeft"){ b[(i-1+b.length)%b.length].focus(); e.preventDefault(); }
   });
 
-  renderTiers({tier:-2}); renderLog(); $("runBtn").focus(); runAll();
+  renderTiers({tier:-2}); renderLog(); $("runBtn").focus();
 })();
 </script>
 </body>
