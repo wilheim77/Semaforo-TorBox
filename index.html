@@ -26,6 +26,9 @@ body{padding-top:max(3vh,env(safe-area-inset-top,0px));padding-bottom:max(3vh,en
 header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.5em 1rem;margin-bottom:2.5vh}
 h1{font-family:var(--display);font-weight:700;font-size:2em;margin:0;letter-spacing:.02em}
 .updated{color:var(--muted);font-size:.8em}
+.exit{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3em 1em;margin-bottom:1.2em;color:var(--muted)}
+.exit.vpn{background:color-mix(in srgb,var(--bad) 16%,var(--panel));border:2px solid var(--bad);border-radius:12px;padding:.8em 1.2em;color:var(--fg);font-size:1.15em}
+.exit.vpn b{color:var(--bad)}
 .reco{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:12px;padding:1.1em 1.4em;margin-bottom:2vw;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:.4em 2em}
 .reco.ok{border-left-color:var(--ok)} .reco.warn{border-left-color:var(--warn)} .reco.bad{border-left-color:var(--bad)}
 @media (max-width:760px){.reco{grid-template-columns:1fr}}
@@ -72,6 +75,8 @@ tr.best td{color:var(--accent);font-weight:600}
   <h1>Semáforo TorBox</h1>
   <span class="updated" id="stamp">Midiendo…</span>
 </header>
+
+<section class="exit" id="exit"><span class="label">Sales a Internet por</span> <span id="exitText">comprobando…</span></section>
 
 <section class="reco" id="reco">
   <div>
@@ -331,14 +336,41 @@ tr.best td{color:var(--accent);font-weight:600}
     $("logBody").innerHTML = l.map(function(r){ return "<tr><td>"+r.t+"</td><td>"+r.tb+"</td><td>"+r.cdn+"</td><td>"+r.net+"</td><td>"+r.lat+"</td><td>"+r.v+"</td></tr>"; }).join("");
   }
 
+  // Desde dónde sale la conexión: país y compañía. Si no es España o es un proveedor de VPN/hosting, avisa.
+  var VPN_HINTS = /vpn|proton|nord|mullvad|surfshark|express|cyberghost|private internet|windscribe|ivpn|m247|datacamp|cdn77|hosting|hetzner|ovh|digitalocean|linode|akamai|leaseweb|choopa|vultr|amazon|google cloud|microsoft|oracle|cloudflare|zscaler|clouvider|packethub|tefincom|hydra/i;
+  var COUNTRY = { ES:"España", FR:"Francia", PT:"Portugal", NL:"Países Bajos", DE:"Alemania", GB:"Reino Unido", IE:"Irlanda", IT:"Italia", BE:"Bélgica", CH:"Suiza", SE:"Suecia", US:"Estados Unidos" };
+  async function exitInfo(){
+    var tries = [
+      ["https://speed.cloudflare.com/meta", function(j){ return { country:j.country, org:j.asOrganization }; }],
+      ["https://ipapi.co/json/", function(j){ return { country:j.country_code||j.country, org:j.org }; }],
+      ["https://ipinfo.io/json", function(j){ return { country:j.country, org:(j.org||"").replace(/^AS\d+\s*/,"") }; }]
+    ];
+    for (var i=0;i<tries.length;i++){
+      try { var c=timeout(5000); var r=await fetch(tries[i][0], { cache:"no-store", signal:c.signal }); c.done(); var o=tries[i][1](await r.json()); if (o.country) return o; } catch(e){}
+    }
+    return null;
+  }
+  function renderExit(x){
+    var el=$("exit");
+    if (!x){ el.className="exit"; $("exitText").textContent="no se pudo comprobar"; return false; }
+    var where=(COUNTRY[x.country]||x.country)+(x.org?" · "+x.org:"");
+    var vpn = x.country!=="ES" || VPN_HINTS.test(x.org||"");
+    el.className = vpn ? "exit vpn" : "exit";
+    $("exitText").innerHTML = vpn ? "<b>Parece una VPN:</b> "+where+". Desactívala en este aparato y repite la prueba." : where;
+    return vpn;
+  }
+
   async function runAll(){
     if (running) return; running=true;
     $("runBtn").textContent="Midiendo…"; $("recoTitle").textContent="Midiendo…"; $("reco").className="reco";
     $("recoSize").textContent="Tarda unos 25 segundos."; $("recoWhy").textContent=""; renderTiers({tier:-2});
+    $("exit").className="exit"; $("exitText").textContent="comprobando…";
+    var vpn = renderExit(await exitInfo());
     var tb = await testTorBox();
     var net = await testInternet();
     var cdn = await testCdn();
     var r = recommend(tb, cdn, net);
+    if (vpn && r.why) r.why += " Estás midiendo a través de una VPN: sin ella probablemente irá mejor.";
     $("reco").className = "reco " + r.cls;
     $("recoTitle").textContent = r.title; $("recoSize").innerHTML = r.size; $("recoWhy").innerHTML = r.why;
     renderTiers(r);
@@ -351,7 +383,7 @@ tr.best td{color:var(--accent);font-weight:600}
       cdn: cdn && cdn.speed ? fmt(cdn.speed.sustained)+" Mbps · "+cdn.server.region : (cdn && cdn.down ? "sin respuesta" : "–"),
       net: net.speed ? fmt(net.speed.sustained)+" Mbps" : "✕",
       lat: net.p.lat!=null ? Math.round(net.p.lat)+" ms" : "–",
-      v: r.title
+      v: r.title + (vpn ? " (con VPN)" : "")
     });
     saveLog(l); renderLog();
     $("runBtn").textContent="Repetir prueba"; running=false;
