@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semáforo TorBox</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Semáforo">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1720">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700&family=Barlow:wght@400;600&display=swap">
+<style>
+/* Pantalla de TV a 3 metros: tres paneles grandes, veredicto arriba, historial abajo. Tema oscuro fijo (se mira de noche). */
+:root{
+  --bg:#0f1720; --panel:#17222e; --line:#26364a; --fg:#e8eef5; --muted:#8fa3b8;
+  --accent:#f2b84b; --ok:#4fd18b; --warn:#f2b84b; --bad:#ff6b6b;
+  --display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body)}
+body{padding-block:3vh;padding-left:max(16px,4vw);padding-right:max(16px,4vw);font-size:clamp(15px,1.5vw,26px)}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:3vh}
+h1{font-family:var(--display);font-weight:700;font-size:2.2em;margin:0;letter-spacing:.02em}
+.verdict{font-family:var(--display);font-size:1.6em;font-weight:500;color:var(--muted)}
+.verdict b{color:var(--fg)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2vw}
+@media (max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:1.2em 1.4em;display:flex;flex-direction:column;gap:.5em;min-width:0}
+.label{text-transform:uppercase;letter-spacing:.12em;font-size:.75em;color:var(--muted);font-weight:600}
+.big{font-family:var(--display);font-weight:700;font-size:3.6em;line-height:1;font-variant-numeric:tabular-nums}
+.big small{font-size:.4em;color:var(--muted);font-weight:500;margin-left:.15em}
+.sub{color:var(--muted);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.pill{align-self:flex-start;border-radius:99px;padding:.15em .8em;font-weight:600;font-size:.85em;background:var(--line);color:var(--muted)}
+.pill.ok{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok)}
+.pill.warn{background:color-mix(in srgb,var(--warn) 20%,transparent);color:var(--warn)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 20%,transparent);color:var(--bad)}
+.bar{height:.5em;background:var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+.controls{display:flex;flex-wrap:wrap;gap:1em;margin:3vh 0 2vh}
+button{font:inherit;font-weight:600;font-size:1em;padding:.6em 1.4em;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
+button:focus,button:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent)}
+button.primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+button.on{border-color:var(--ok);color:var(--ok)}
+.log{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:.85em}
+th,td{text-align:left;padding:.35em .8em;border-bottom:1px solid var(--line);white-space:nowrap}
+th{color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:.8em}
+.legend{color:var(--muted);font-size:.8em;margin-top:2vh}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Semáforo TorBox</h1>
+  <div class="verdict" id="verdict">Midiendo…</div>
+</header>
+
+<section class="grid">
+  <div class="card">
+    <span class="label">TorBox · servicio</span>
+    <span class="pill" id="tbPill">Comprobando</span>
+    <div class="big" id="tbLat">–<small>ms</small></div>
+    <span class="sub" id="tbSub">Respuesta de la API</span>
+  </div>
+  <div class="card">
+    <span class="label">TorBox · velocidad CDN</span>
+    <span class="pill" id="cdnPill">En espera</span>
+    <div class="big" id="cdnSpeed">–<small>Mbps</small></div>
+    <div class="bar"><i id="cdnBar"></i></div>
+    <span class="sub" id="cdnSub">Servidor más cercano</span>
+  </div>
+  <div class="card">
+    <span class="label">Tu conexión a Internet</span>
+    <span class="pill" id="netPill">En espera</span>
+    <div class="big" id="netSpeed">–<small>Mbps</small></div>
+    <div class="bar"><i id="netBar"></i></div>
+    <span class="sub" id="netSub">Latencia – · jitter –</span>
+  </div>
+</section>
+
+<div class="controls">
+  <button class="primary" id="runBtn" autofocus>Repetir prueba</button>
+  <button id="watchBtn">Vigilar cada 5 min: no</button>
+  <button id="clearBtn">Borrar historial</button>
+</div>
+
+<section class="log">
+  <table>
+    <thead><tr><th>Hora</th><th>TorBox</th><th>CDN</th><th>Internet</th><th>Latencia</th><th>Veredicto</th></tr></thead>
+    <tbody id="logBody"><tr><td colspan="6" class="sub">Sin mediciones todavía.</td></tr></tbody>
+  </table>
+  <p class="legend">Referencia de TorBox para streaming: 720p ≥ 25 Mbps · 1080p ≥ 50 Mbps · 4K ≥ 75 Mbps.</p>
+</section>
+
+<script>
+(function(){
+  var API = "https://api.torbox.app";
+  var CF = "https://speed.cloudflare.com/__down";
+  var $ = function(id){ return document.getElementById(id); };
+  var running = false, watchTimer = null;
+
+  function now(){ return (window.performance && performance.now) ? performance.now() : Date.now(); }
+  function setPill(id, cls, text){ var el=$(id); el.className="pill "+(cls||""); el.textContent=text; }
+  function setBig(id, val, unit){ $(id).innerHTML = val + '<small>' + unit + '</small>'; }
+  function fmt(n){ return n >= 100 ? Math.round(n) : n.toFixed(1); }
+  function quality(mbps){
+    if (mbps >= 75) return ["ok","Da para 4K"];
+    if (mbps >= 50) return ["ok","Da para 1080p"];
+    if (mbps >= 25) return ["warn","Solo 720p fluido"];
+    return ["bad","Insuficiente"];
+  }
+  function withTimeout(ms){
+    var c = new AbortController();
+    var t = setTimeout(function(){ c.abort(); }, ms);
+    return { signal:c.signal, done:function(){ clearTimeout(t); }, abort:function(){ c.abort(); } };
+  }
+
+  // Descarga en paralelo durante "seconds"; devuelve Mbps
+  async function measureDownload(urls, seconds, barId, liveId){
+    var bytes = 0, start = now(), ctl = withTimeout(seconds*1000 + 2000), stopAt = start + seconds*1000;
+    var tick = setInterval(function(){
+      var el = (now()-start)/1000; if (el <= 0) return;
+      var m = bytes*8/el/1e6;
+      setBig(liveId, fmt(m), "Mbps");
+      $(barId).style.width = Math.min(100, (now()-start)/(seconds*10)) + "%";
+    }, 250);
+    async function one(url){
+      var res = await fetch(url, { signal: ctl.signal, cache: "no-store" });
+      if (!res.ok || !res.body) throw new Error("HTTP " + res.status);
+      var reader = res.body.getReader();
+      while (true) {
+        var r = await reader.read();
+        if (r.done) break;
+        bytes += r.value.length;
+        if (now() >= stopAt) { try{ reader.cancel(); }catch(e){} break; }
+      }
+    }
+    var results = await Promise.allSettled(urls.map(one));
+    clearInterval(tick); ctl.done();
+    $(barId).style.width = "100%";
+    var elapsed = (now()-start)/1000;
+    if (bytes === 0) {
+      var err = results.find(function(r){ return r.status === "rejected"; });
+      throw (err && err.reason) || new Error("Sin datos");
+    }
+    return bytes*8/elapsed/1e6;
+  }
+
+  async function testTorBox(){
+    setPill("tbPill","","Comprobando");
+    var t0 = now();
+    try {
+      var c = withTimeout(8000);
+      var res = await fetch(API + "/", { signal:c.signal, cache:"no-store" }); c.done();
+      var ms = now()-t0, detail = "";
+      try { var j = await res.json(); detail = j.detail || ""; if (j.success === false) throw new Error(detail || "Caído"); } catch(e){ if (e.message && e.message !== "Unexpected end of JSON input" && !(e instanceof SyntaxError)) throw e; }
+      setBig("tbLat", Math.round(ms), "ms");
+      setPill("tbPill", ms < 400 ? "ok" : "warn", ms < 400 ? "Operativo" : "Operativo, lento");
+      $("tbSub").textContent = detail ? detail : "La API responde";
+      return { state:"Operativo", ms:ms };
+    } catch(e) {
+      // Si CORS bloquea la lectura, comprobamos solo que el servidor responde
+      try {
+        var c2 = withTimeout(8000); var t1 = now();
+        await fetch(API + "/", { mode:"no-cors", signal:c2.signal, cache:"no-store" }); c2.done();
+        var ms2 = now()-t1;
+        setBig("tbLat", Math.round(ms2), "ms");
+        setPill("tbPill","ok","Responde");
+        $("tbSub").textContent = "El servidor contesta (detalle no legible desde el navegador)";
+        return { state:"Responde", ms:ms2 };
+      } catch(e2) {
+        setBig("tbLat", "✕", "");
+        setPill("tbPill","bad","Sin respuesta");
+        $("tbSub").textContent = "No contesta. Mira status.torbox.app";
+        return { state:"Caído", ms:null };
+      }
+    }
+  }
+
+  function findUrl(o){
+    if (!o || typeof o !== "object") return null;
+    var keys = ["url","link","download","path","file"];
+    for (var i=0;i<keys.length;i++){ var v=o[keys[i]]; if (typeof v==="string" && /^https?:\/\//.test(v)) return v; }
+    for (var k in o){ var w=o[k]; if (typeof w==="string" && /^https?:\/\//.test(w)) return w; }
+    return null;
+  }
+
+  async function testCdn(){
+    setPill("cdnPill","","Buscando servidor");
+    setBig("cdnSpeed","–","Mbps"); $("cdnBar").style.width="0";
+    var list;
+    try {
+      var c = withTimeout(8000);
+      var res = await fetch(API + "/v1/api/speedtest?test_length=short&testLength=short", { signal:c.signal, cache:"no-store" }); c.done();
+      var j = await res.json();
+      list = Array.isArray(j.data) ? j.data : (j.data && typeof j.data === "object" ? Object.values(j.data) : []);
+    } catch(e) {
+      setPill("cdnPill","warn","No medible aquí");
+      $("cdnSub").textContent = "Abre torbox.app/speedtest para medir el CDN";
+      return null;
+    }
+    var item = null;
+    for (var i=0;i<list.length;i++){ if (findUrl(list[i])) { item = list[i]; break; } }
+    if (!item){ setPill("cdnPill","warn","Sin servidores"); $("cdnSub").textContent="TorBox no devolvió ficheros de prueba"; return null; }
+    var url = findUrl(item);
+    var name = item.name || item.server || item.region || (new URL(url)).hostname;
+    var region = item.region && item.region !== name ? " · " + item.region : "";
+    $("cdnSub").textContent = name + region;
+    setPill("cdnPill","","Midiendo");
+    try {
+      var mbps = await measureDownload([url, url], 8, "cdnBar", "cdnSpeed");
+      var q = quality(mbps);
+      setBig("cdnSpeed", fmt(mbps), "Mbps"); setPill("cdnPill", q[0], q[1]);
+      return mbps;
+    } catch(e) {
+      setBig("cdnSpeed","–","Mbps");
+      setPill("cdnPill","warn","Bloqueado por el navegador");
+      $("cdnSub").textContent = name + " · usa torbox.app/speedtest";
+      return null;
+    }
+  }
+
+  async function testInternet(){
+    setPill("netPill","","Latencia");
+    setBig("netSpeed","–","Mbps"); $("netBar").style.width="0";
+    var pings = [];
+    for (var i=0;i<8;i++){
+      try { var t0=now(); var c=withTimeout(4000); await fetch(CF + "?bytes=0&r=" + Math.random(), { signal:c.signal, cache:"no-store" }); c.done(); pings.push(now()-t0); } catch(e){}
+    }
+    var lat = null, jit = null;
+    if (pings.length){
+      var s = pings.slice().sort(function(a,b){return a-b;}); lat = s[Math.floor(s.length/2)];
+      var diffs = []; for (var k=1;k<pings.length;k++) diffs.push(Math.abs(pings[k]-pings[k-1]));
+      jit = diffs.length ? diffs.reduce(function(a,b){return a+b;},0)/diffs.length : 0;
+    }
+    $("netSub").textContent = "Latencia " + (lat!=null?Math.round(lat)+" ms":"–") + " · jitter " + (jit!=null?Math.round(jit)+" ms":"–") + (pings.length<8 ? " · " + (8-pings.length) + "/8 sin respuesta" : "");
+    setPill("netPill","","Midiendo descarga");
+    try {
+      var urls = [0,1,2,3].map(function(){ return CF + "?bytes=50000000&r=" + Math.random(); });
+      var mbps = await measureDownload(urls, 8, "netBar", "netSpeed");
+      var q = quality(mbps);
+      setBig("netSpeed", fmt(mbps), "Mbps"); setPill("netPill", q[0], q[1]);
+      return { mbps:mbps, lat:lat };
+    } catch(e) {
+      setBig("netSpeed","✕",""); setPill("netPill","bad","Sin conexión");
+      return { mbps:null, lat:lat };
+    }
+  }
+
+  function verdictFor(tb, cdn, net){
+    if (net.mbps == null) return "Sin Internet: el problema es tu red";
+    if (tb.state === "Caído") return "TorBox no responde: el problema es suyo";
+    if (net.mbps < 25) return "Tu conexión va corta para streaming";
+    if (cdn != null && cdn < 25 && net.mbps >= 50) return "Tu red va bien, el CDN de TorBox va lento";
+    if (cdn != null && cdn < net.mbps * 0.4) return "TorBox va bastante por debajo de tu línea";
+    return "Todo en orden";
+  }
+
+  function loadLog(){ try { return JSON.parse(localStorage.getItem("semaforo-log") || "[]"); } catch(e){ return []; } }
+  function saveLog(l){ try { localStorage.setItem("semaforo-log", JSON.stringify(l.slice(0,40))); } catch(e){} }
+  function renderLog(){
+    var l = loadLog(), tb = $("logBody");
+    if (!l.length){ tb.innerHTML = '<tr><td colspan="6" class="sub">Sin mediciones todavía.</td></tr>'; return; }
+    tb.innerHTML = l.map(function(r){
+      return "<tr><td>"+r.t+"</td><td>"+r.tb+"</td><td>"+(r.cdn!=null?fmt(r.cdn)+" Mbps":"–")+"</td><td>"+(r.net!=null?fmt(r.net)+" Mbps":"✕")+"</td><td>"+(r.lat!=null?Math.round(r.lat)+" ms":"–")+"</td><td>"+r.v+"</td></tr>";
+    }).join("");
+  }
+
+  async function runAll(){
+    if (running) return; running = true;
+    $("runBtn").textContent = "Midiendo…"; $("verdict").textContent = "Midiendo…";
+    var tb = await testTorBox();
+    var net = await testInternet();
+    var cdn = tb.state === "Caído" ? null : await testCdn();
+    var v = verdictFor(tb, cdn, net);
+    $("verdict").innerHTML = "<b>" + v + "</b>";
+    var d = new Date();
+    var l = loadLog();
+    l.unshift({ t: d.toLocaleString("es-ES",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}), tb: tb.state + (tb.ms!=null?" ("+Math.round(tb.ms)+" ms)":""), cdn: cdn, net: net.mbps, lat: net.lat, v: v });
+    saveLog(l); renderLog();
+    $("runBtn").textContent = "Repetir prueba"; running = false;
+  }
+
+  $("runBtn").addEventListener("click", runAll);
+  $("clearBtn").addEventListener("click", function(){ saveLog([]); renderLog(); });
+  $("watchBtn").addEventListener("click", function(){
+    if (watchTimer){ clearInterval(watchTimer); watchTimer=null; this.textContent="Vigilar cada 5 min: no"; this.classList.remove("on"); }
+    else { watchTimer=setInterval(runAll, 5*60*1000); this.textContent="Vigilar cada 5 min: sí"; this.classList.add("on"); }
+  });
+
+  // Navegación con el mando (flechas izquierda/derecha entre botones)
+  var btns = [$("runBtn"),$("watchBtn"),$("clearBtn")];
+  document.addEventListener("keydown", function(e){
+    var i = btns.indexOf(document.activeElement);
+    if (e.key === "ArrowRight"){ btns[(i+1+btns.length)%btns.length].focus(); e.preventDefault(); }
+    if (e.key === "ArrowLeft"){ btns[(i-1+btns.length)%btns.length].focus(); e.preventDefault(); }
+  });
+
+  renderLog();
+  $("runBtn").focus();
+  runAll();
+})();
+</script>
+</body>
+</html>
