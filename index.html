@@ -54,6 +54,8 @@ h1{font-family:var(--display);font-weight:700;font-size:2em;margin:0;letter-spac
 button{font:inherit;font-weight:600;font-size:1em;padding:.6em 1.4em;border-radius:10px;border:2px solid var(--line);background:var(--panel);color:var(--fg);cursor:pointer}
 button:focus,button:focus-visible{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 35%,transparent)}
 button.primary{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+.btnlink{display:inline-flex;align-items:center;font-weight:600;padding:.6em 1.4em;border-radius:10px;border:2px solid var(--accent);color:var(--accent);text-decoration:none}
+.btnlink:focus,.btnlink:focus-visible{outline:none;background:var(--accent);color:var(--bg)}
 button.on{border-color:var(--ok);color:var(--ok)}
 h3{font-family:var(--display);font-weight:500;font-size:1.3em;margin:2.5vh 0 .6em;color:var(--muted);letter-spacing:.03em}
 .scroll{overflow-x:auto}
@@ -108,6 +110,7 @@ tr.best td{color:var(--accent);font-weight:600}
   <button class="primary" id="runBtn" autofocus>Repetir prueba</button>
   <button id="watchBtn">Vigilar cada 5 min: no</button>
   <button id="clearBtn">Borrar historial</button>
+  <a class="btnlink" id="cdnSettings" href="https://torbox.app/settings?section=integration-settings" target="_blank" rel="noopener">Cambiar servidor en TorBox</a>
 </div>
 
 <h3>Servidores de TorBox en Europa</h3>
@@ -117,7 +120,7 @@ tr.best td{color:var(--accent);font-weight:600}
     <tbody id="cdnBody"><tr><td colspan="4" class="sub">Pendiente.</td></tr></tbody>
   </table>
 </div>
-<p class="legend">El marcado es el que mejor responde desde tu casa. Si en los ajustes de TorBox puedes fijar la región del CDN, elige esa.</p>
+<p class="legend">El marcado es el que mejor responde desde tu casa. Para fijarlo, pulsa «Cambiar servidor en TorBox» y elige esa región en Integration Settings → CDN (en Auto usa el más cercano).</p>
 
 <h3>Historial</h3>
 <div class="scroll">
@@ -361,7 +364,7 @@ tr.best td{color:var(--accent);font-weight:600}
     else { watchTimer=setInterval(runAll, 5*60*1000); this.textContent="Vigilar cada 5 min: sí"; this.classList.add("on"); }
   });
   document.addEventListener("keydown", function(e){
-    var b=[$("runBtn"),$("watchBtn"),$("clearBtn")], i=b.indexOf(document.activeElement);
+    var b=[$("runBtn"),$("watchBtn"),$("clearBtn"),$("cdnSettings")], i=b.indexOf(document.activeElement);
     if (e.key==="ArrowRight"){ b[(i+1+b.length)%b.length].focus(); e.preventDefault(); }
     if (e.key==="ArrowLeft"){ b[(i-1+b.length)%b.length].focus(); e.preventDefault(); }
   });
