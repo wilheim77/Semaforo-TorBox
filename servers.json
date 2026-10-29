@@ -1,133 +1,133 @@
 {
- "updated": "2026-10-29T12:42:26+00:00",
+ "updated": "2026-10-29T12:45:00+00:00",
  "servers": [
+  {
+   "region": "wnam",
+   "name": "store-011",
+   "domain": "https://store-011.wnam.tb-cdn.io",
+   "url": "https://store-011.wnam.tb-cdn.io/dld/100MB.bin",
+   "lat": 34.0522,
+   "lng": -118.2437
+  },
   {
    "region": "cnam",
    "name": "nexus-090",
    "domain": "https://nexus-090.cnam.tb-cdn.io",
    "url": "https://nexus-090.cnam.tb-cdn.io/dld/100MB.bin",
-   "lat": null,
-   "lng": null
-  },
-  {
-   "region": "enam",
-   "name": "nexus-087",
-   "domain": "https://nexus-087.enam.tb-cdn.io",
-   "url": "https://nexus-087.enam.tb-cdn.io/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": 41.8781,
+   "lng": -87.6298
   },
   {
    "region": "snam",
    "name": "nexus-190",
    "domain": "https://nexus-190.snam.tb-cdn.io",
    "url": "https://nexus-190.snam.tb-cdn.io/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": 25.7617,
+   "lng": -80.1918
   },
   {
-   "region": "wnam",
-   "name": "store-011",
-   "domain": "https://store-011.wnam.tb-cdn.io",
-   "url": "https://store-011.wnam.tb-cdn.io/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "region": "enam",
+   "name": "nexus-087",
+   "domain": "https://nexus-087.enam.tb-cdn.io",
+   "url": "https://nexus-087.enam.tb-cdn.io/dld/100MB.bin",
+   "lat": 40.7128,
+   "lng": -74.006
   },
   {
    "region": "seur",
    "name": "nexus-265",
    "domain": "https://nexus-265.seur.tb-cdn.st",
    "url": "https://nexus-265.seur.tb-cdn.st/dld/100MB.bin",
-   "lat": null,
-   "lng": null
-  },
-  {
-   "region": "neur",
-   "name": "nexus-273",
-   "domain": "https://nexus-273.neur.tb-cdn.st",
-   "url": "https://nexus-273.neur.tb-cdn.st/dld/100MB.bin",
-   "lat": null,
-   "lng": null
-  },
-  {
-   "region": "ceur",
-   "name": "nexus-326",
-   "domain": "https://nexus-326.ceur.tb-cdn.st",
-   "url": "https://nexus-326.ceur.tb-cdn.st/dld/100MB.bin",
-   "lat": null,
-   "lng": null
-  },
-  {
-   "region": "weur",
-   "name": "store-068",
-   "domain": "https://store-068.weur.tb-cdn.st",
-   "url": "https://store-068.weur.tb-cdn.st/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": 38.7167,
+   "lng": -9.1333
   },
   {
    "region": "latm",
    "name": "nexus-242",
    "domain": "https://nexus-242.latm.tb-cdn.cx",
    "url": "https://nexus-242.latm.tb-cdn.cx/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": -23.5505,
+   "lng": -46.6333
   },
   {
-   "region": "nord",
-   "name": "nexus-226",
-   "domain": "https://nexus-226.nord.tb-cdn.st",
-   "url": "https://nexus-226.nord.tb-cdn.st/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "region": "neur",
+   "name": "nexus-273",
+   "domain": "https://nexus-273.neur.tb-cdn.st",
+   "url": "https://nexus-273.neur.tb-cdn.st/dld/100MB.bin",
+   "lat": 51.5074,
+   "lng": -0.1278
+  },
+  {
+   "region": "ceur",
+   "name": "nexus-326",
+   "domain": "https://nexus-326.ceur.tb-cdn.st",
+   "url": "https://nexus-326.ceur.tb-cdn.st/dld/100MB.bin",
+   "lat": 48.5833,
+   "lng": 7.75
+  },
+  {
+   "region": "weur",
+   "name": "store-068",
+   "domain": "https://store-068.weur.tb-cdn.st",
+   "url": "https://store-068.weur.tb-cdn.st/dld/100MB.bin",
+   "lat": 52.374,
+   "lng": 4.8897
   },
   {
    "region": "hare",
    "name": "bunnycdn",
    "domain": "https://nexus.hare.tb-cdn.earth",
    "url": "https://nexus.hare.tb-cdn.earth/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": 0,
+   "lng": 0
   },
   {
    "region": "erth",
    "name": "cloudflare",
    "domain": "https://nexus.erth.tb-cdn.earth",
    "url": "https://nexus.erth.tb-cdn.earth/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": 0,
+   "lng": 0
+  },
+  {
+   "region": "nord",
+   "name": "nexus-226",
+   "domain": "https://nexus-226.nord.tb-cdn.st",
+   "url": "https://nexus-226.nord.tb-cdn.st/dld/100MB.bin",
+   "lat": 59.9139,
+   "lng": 10.7522
   },
   {
    "region": "indi",
    "name": "nexus-160",
    "domain": "https://nexus-160.indi.tb-cdn.pw",
    "url": "https://nexus-160.indi.tb-cdn.pw/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": 19.076,
+   "lng": 72.8777
   },
   {
    "region": "zafr",
    "name": "nexus-211",
    "domain": "https://nexus-211.zafr.tb-cdn.to",
    "url": "https://nexus-211.zafr.tb-cdn.to/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": -26.2041,
+   "lng": 28.0473
   },
   {
    "region": "apac",
    "name": "nexus-270",
    "domain": "https://nexus-270.apac.tb-cdn.pw",
    "url": "https://nexus-270.apac.tb-cdn.pw/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": 1.3521,
+   "lng": 103.8198
   },
   {
    "region": "japn",
    "name": "nexus-115",
    "domain": "https://nexus-115.japn.tb-cdn.pw",
    "url": "https://nexus-115.japn.tb-cdn.pw/dld/100MB.bin",
-   "lat": null,
-   "lng": null
+   "lat": 35.6895,
+   "lng": 139.6917
   }
  ]
 }
