@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-29T12:45:00+00:00",
+ "updated": "2026-11-02T12:42:35+00:00",
  "servers": [
   {
    "region": "wnam",
@@ -19,9 +19,9 @@
   },
   {
    "region": "snam",
-   "name": "nexus-190",
-   "domain": "https://nexus-190.snam.tb-cdn.io",
-   "url": "https://nexus-190.snam.tb-cdn.io/dld/100MB.bin",
+   "name": "nexus-306",
+   "domain": "https://nexus-306.snam.tb-cdn.io",
+   "url": "https://nexus-306.snam.tb-cdn.io/dld/100MB.bin",
    "lat": 25.7617,
    "lng": -80.1918
   },
@@ -51,17 +51,17 @@
   },
   {
    "region": "neur",
-   "name": "nexus-273",
-   "domain": "https://nexus-273.neur.tb-cdn.st",
-   "url": "https://nexus-273.neur.tb-cdn.st/dld/100MB.bin",
+   "name": "nexus-366",
+   "domain": "https://nexus-366.neur.tb-cdn.st",
+   "url": "https://nexus-366.neur.tb-cdn.st/dld/100MB.bin",
    "lat": 51.5074,
    "lng": -0.1278
   },
   {
    "region": "ceur",
-   "name": "nexus-326",
-   "domain": "https://nexus-326.ceur.tb-cdn.st",
-   "url": "https://nexus-326.ceur.tb-cdn.st/dld/100MB.bin",
+   "name": "nexus-323",
+   "domain": "https://nexus-323.ceur.tb-cdn.st",
+   "url": "https://nexus-323.ceur.tb-cdn.st/dld/100MB.bin",
    "lat": 48.5833,
    "lng": 7.75
   },
@@ -91,9 +91,9 @@
   },
   {
    "region": "nord",
-   "name": "nexus-226",
-   "domain": "https://nexus-226.nord.tb-cdn.st",
-   "url": "https://nexus-226.nord.tb-cdn.st/dld/100MB.bin",
+   "name": "nexus-384",
+   "domain": "https://nexus-384.nord.tb-cdn.st",
+   "url": "https://nexus-384.nord.tb-cdn.st/dld/100MB.bin",
    "lat": 59.9139,
    "lng": 10.7522
   },
