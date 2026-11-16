@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-09T13:07:26+00:00",
+ "updated": "2026-11-16T12:59:00+00:00",
  "servers": [
   {
    "region": "cnam",
@@ -8,6 +8,14 @@
    "url": "https://nexus-090.cnam.tb-cdn.io/dld/100MB.bin",
    "lat": 41.8781,
    "lng": -87.6298
+  },
+  {
+   "region": "ecan",
+   "name": "nexus-410",
+   "domain": "https://nexus-410.ecan.tb-cdn.io",
+   "url": "https://nexus-410.ecan.tb-cdn.io/dld/100MB.bin",
+   "lat": 43.6532,
+   "lng": -79.3832
   },
   {
    "region": "enam",
@@ -19,9 +27,9 @@
   },
   {
    "region": "snam",
-   "name": "nexus-306",
-   "domain": "https://nexus-306.snam.tb-cdn.io",
-   "url": "https://nexus-306.snam.tb-cdn.io/dld/100MB.bin",
+   "name": "nexus-191",
+   "domain": "https://nexus-191.snam.tb-cdn.io",
+   "url": "https://nexus-191.snam.tb-cdn.io/dld/100MB.bin",
    "lat": 25.7617,
    "lng": -80.1918
   },
@@ -35,25 +43,25 @@
   },
   {
    "region": "seur",
-   "name": "nexus-265",
-   "domain": "https://nexus-265.seur.tb-cdn.st",
-   "url": "https://nexus-265.seur.tb-cdn.st/dld/100MB.bin",
+   "name": "nexus-140",
+   "domain": "https://nexus-140.seur.tb-cdn.st",
+   "url": "https://nexus-140.seur.tb-cdn.st/dld/100MB.bin",
    "lat": 38.7167,
    "lng": -9.1333
   },
   {
    "region": "neur",
-   "name": "nexus-378",
-   "domain": "https://nexus-378.neur.tb-cdn.st",
-   "url": "https://nexus-378.neur.tb-cdn.st/dld/100MB.bin",
+   "name": "nexus-375",
+   "domain": "https://nexus-375.neur.tb-cdn.st",
+   "url": "https://nexus-375.neur.tb-cdn.st/dld/100MB.bin",
    "lat": 51.5074,
    "lng": -0.1278
   },
   {
    "region": "ceur",
-   "name": "nexus-323",
-   "domain": "https://nexus-323.ceur.tb-cdn.st",
-   "url": "https://nexus-323.ceur.tb-cdn.st/dld/100MB.bin",
+   "name": "nexus-329",
+   "domain": "https://nexus-329.ceur.tb-cdn.st",
+   "url": "https://nexus-329.ceur.tb-cdn.st/dld/100MB.bin",
    "lat": 48.5833,
    "lng": 7.75
   },
@@ -99,9 +107,9 @@
   },
   {
    "region": "indi",
-   "name": "nexus-160",
-   "domain": "https://nexus-160.indi.tb-cdn.pw",
-   "url": "https://nexus-160.indi.tb-cdn.pw/dld/100MB.bin",
+   "name": "nexus-078",
+   "domain": "https://nexus-078.indi.tb-cdn.pw",
+   "url": "https://nexus-078.indi.tb-cdn.pw/dld/100MB.bin",
    "lat": 19.076,
    "lng": 72.8777
   },
@@ -115,9 +123,9 @@
   },
   {
    "region": "apac",
-   "name": "nexus-393",
-   "domain": "https://nexus-393.apac.tb-cdn.pw",
-   "url": "https://nexus-393.apac.tb-cdn.pw/dld/100MB.bin",
+   "name": "nexus-390",
+   "domain": "https://nexus-390.apac.tb-cdn.pw",
+   "url": "https://nexus-390.apac.tb-cdn.pw/dld/100MB.bin",
    "lat": 1.3521,
    "lng": 103.8198
   },
